@@ -20,7 +20,7 @@ const OverlayTile = props => {
             buttonStyles.push(styles.buttonSuccess);
             buttonTitleStyles.push(styles.buttonTitleSuccess);
             break;
-        case 'danger':
+        case 'failure':
             titleStyles.push(styles.titleFailure);
             buttonStyles.push(styles.buttonFailure);
             buttonTitleStyles.push(styles.buttonTitleFailure);
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.success,
     },
     buttonFailure: {
-        borderColor: colors.danger,
+        borderColor: Colors.milk,
     },
     buttonTitle: {
         color: Colors.milk,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         color: Colors.success,
     },
     buttonTitleFailure: {
-        color: Colors.danger,
+        color: Colors.milk,
     }
 });
 

@@ -16,6 +16,7 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLoading: true,
+                error: null,
             }
         case actionTypes.AUTH_SUCCESS:
             return {
@@ -39,6 +40,7 @@ const authReducer = (state = initialState, action) => {
                 isLoading: false,
                 token: null,
                 userId: null,
+                error: null,
             }
         case actionTypes.SET_PROFILE_SUCCESS:
             return {
@@ -48,6 +50,7 @@ const authReducer = (state = initialState, action) => {
                 userId: null,
                 justRegistered: true,
                 profileId: action.profileId,
+                error: null,
             }
         case actionTypes.SET_PROFILE_FAILED:
             return {

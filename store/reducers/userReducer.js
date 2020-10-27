@@ -11,6 +11,7 @@ const initialState = {
         lastName: null,
         phoneNo: null,
     },
+    error: null,
 }
 
 const userReducer = (state = initialState, action) => {
@@ -19,6 +20,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 currentUser: action.user,
+                error: null,
             };
         default: 
             return state;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -15,10 +15,25 @@ import * as validators from '../validators/AuthValidator';
 import Colors from '../constants/Colors';
 import InputTile from '../components/UI/InputTile';
 import OverlayTile from '../components/UI/OverlayTile';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const AuthForm = props => {
+    const token = useSelector(state => state.ath.token);
+    const authError = useSelector(state => state.ath.error);
+
+    useEffect(() => {
+        if(token){
+            setIsLoading(false);
+            props.goToApp();
+        }
+        if(authError != null){
+            setShowError(true);
+            setIsLoading(false);
+        } 
+    },[token, authError]);
+
     const dispatch = useDispatch();
+
 
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
@@ -34,6 +49,8 @@ const AuthForm = props => {
     const [emailError, setEmailError] = useState();
     const [passwordError, setPasswordError] = useState();
     const [passwordConfirmError, setPasswordConfirmError] = useState();
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const toggleAuthMode = () => {
         setIsLogin(prevState => !prevState);
@@ -54,6 +71,7 @@ const AuthForm = props => {
         const emailError = validators.emailValidator(email);
         const passwordError = validators.passwordValidator(password);
         const passwordConfirmError = validators.passwordConfirmValidator(passwordConfirm,password);
+
 
         let valid = true;
 
@@ -90,7 +108,18 @@ const AuthForm = props => {
         return valid;
     }
 
+
+    const clearErrors = () => {
+        setUserNameError();
+        setEmailError();
+        setPasswordError();
+        setPasswordConfirmError();
+    }
+
+
     const submitAuth = () => {
+        setIsLoading(true);
+        clearErrors();
         Keyboard.dismiss();
         const isValid = checkValidity();
         if(isValid){
@@ -99,22 +128,25 @@ const AuthForm = props => {
                 console.log('Logging Dispatch')
                 try {
                     dispatch(actions.authLogin(userName,password));
-                    props.goToApp();
                 } catch (error) {
                     setError(error);
+                    setIsLoading(false);
                 }
             } else {
                 try {
                     dispatch(actions.authSignup(userName,email,password,passwordConfirm));
+                    setIsLoading(false);
                     setIsLogin(true);
                     setShowLoginPrompt(true);
                 } catch (error) {
                     setError(error);
+                    setIsLoading(false);
                 }
             }
         } else {
             console.log('Form not Valid!');
             setError("Form Not Valid!");
+            setIsLoading(false);
         }
     }
 
@@ -150,7 +182,7 @@ const AuthForm = props => {
                     placeholder="Password Confirm"
                     value={passwordConfirm}
                     setValue={setPasswordConfirm}
-                    error={setPasswordConfirmError}
+                    error={passwordConfirmError}
                     obscureText={true}
                 />
             }
@@ -159,6 +191,7 @@ const AuthForm = props => {
                     title={isLogin ? "Login" : "Sign Up"}
                     titleStyle={styles.buttonText}
                     buttonStyle={styles.button} 
+                    loading={isLoading}
                     onPress={submitAuth} 
                 />
             </View>
@@ -175,26 +208,24 @@ const AuthForm = props => {
                     onPress={toggleAuthMode}
                 />
             </View>
-            {
-                error ? 
-                <OverlayTile 
-                    isVisible={showError}
-                    toggleOverlay={toggleShowError}
-                    title="Something Went Wrong!"
-                    body="Your credentials are not valid."
-                    buttonText="Ok"
-                    type="failure"
-                />
-                :
-                <OverlayTile 
-                    isVisible={showLoginPrompt}
-                    toggleOverlay={toggleLoginPrompt}
-                    title="Good To See You"
-                    body="Login with your new credentials to enjoy the application"
-                    buttonText="Alright"
-                    type="success"
-                />
-            }
+
+            <OverlayTile 
+                isVisible={showLoginPrompt}
+                toggleOverlay={toggleLoginPrompt}
+                title="Good To See You"
+                body="Login with your new credentials to enjoy the application"
+                buttonText="Alright"
+                type="success"
+            />
+
+            <OverlayTile 
+                isVisible={showError}
+                toggleOverlay={toggleShowError}
+                title="Something Went Wrong!"
+                body="Credentials Not Valid"
+                buttonText="Ok"
+                type="failure"
+            />
         </View>
     );
 }

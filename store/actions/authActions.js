@@ -94,7 +94,7 @@ export const setProfileStore = (profileId) => {
         const profileData = {
             profileId: profileId,
         };
-        AsyncStorage.setItem('profileData',profileData)
+        AsyncStorage.setItem('profileData',JSON.stringify(profileData))
         .then(response => {
             dispatch(setProfileSuccess(profileId));
         }).catch(error => {

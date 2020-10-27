@@ -12,7 +12,7 @@ export const emailValidator = (value) => {
 
     if(value.length < emailLengthMin){
         return `Please Enter a valid email!`;
-    } else if(!value.containes('@')) {
+    } else if(value.indexOf('@') === -1) {
         return 'Please Enter a valid email!';
     } else {
         return null;
