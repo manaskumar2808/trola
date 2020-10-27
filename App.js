@@ -1,24 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Provider } from 'react-redux';
+import Thunk from 'redux-thunk';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+
 import Colors from './constants/Colors';
 
 import Navigator from './navigator/Navigator';
+import authReducer from './store/reducers/authReducer';
+import userReducer from './store/reducers/userReducer';
+
+const rootReducer = combineReducers({
+  ath: authReducer,
+  usr: userReducer,
+});
+
+const store = createStore(rootReducer, applyMiddleware(Thunk));
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Navigator />
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+        <Navigator />
+        <StatusBar style="auto" />
+    </Provider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    
   },
 });

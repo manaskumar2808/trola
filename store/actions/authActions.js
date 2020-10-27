@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axios from '../../axios-auth';
+import axios from '../../api/axios-auth';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -9,18 +9,15 @@ export const authInit = () => {
     }
 }
 
-export const authAutoLogin = () => {
-    // const token = localStorage.getItem('token');
-    // const userId = localStorage.getItem('userId');
-    // const userName = localStorage.getItem('userName');
-    return dispatch => {
-        if(token == null || token === 'undefined'){
-            dispatch(authLogout());
-        } else {
-            dispatch(authSuccess(token,userId,userName));
-        }
-    }
-}
+// export const authAutoLogin = () => {
+//     return dispatch => {
+//         if(token == null || token === 'undefined'){
+//             dispatch(authLogout());
+//         } else {
+//             dispatch(authSuccess(token,userId,userName));
+//         }
+//     }
+// }
 
 export const authLogin = (userName,password) => {
     return dispatch => {
@@ -28,16 +25,20 @@ export const authLogin = (userName,password) => {
             username: userName,
             password: password,
         };
+
+        console.log("Logging In...");
+
         axios.post('auth-login/',authData)
         .then(response => {
-            console.log(response);
-            dispatch(authSuccess(
+            console.log(response.data);
+            dispatch(setAuthStore(
                 response.data.token,
                 response.data.id,
                 response.data.username,
             ));
         })
         .catch(error => {
+            console.log("Can't connect with the api");
             console.log(error);
             dispatch(authFail(error));
         });
@@ -78,7 +79,7 @@ export const createProfile = (userId,userName,email) => {
         axios.post('profile/create/',profileData).
         then(response => {
             console.log(response.data);
-            dispatch(setProfileSuccess(response.data.id));
+            dispatch(setProfileStore(response.data.id));
         }).
         catch(error => {
             console.log(error);
@@ -88,8 +89,22 @@ export const createProfile = (userId,userName,email) => {
 }
 
 
+export const setProfileStore = (profileId) => {
+    return dispatch => {
+        const profileData = {
+            profileId: profileId,
+        };
+        AsyncStorage.setItem('profileData',profileData)
+        .then(response => {
+            dispatch(setProfileSuccess(profileId));
+        }).catch(error => {
+            dispatch(setProfileFailed(error));
+        });
+    }
+}
+
+
 export const setProfileSuccess = (profileId) => {
-    localStorage.setItem('profileId',profileId);
     return {
         type: actionTypes.SET_PROFILE_SUCCESS,
         profileId: profileId,
@@ -105,16 +120,17 @@ export const setProfileFailed = (error) => {
 
 
 export const authLogout = () => {
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('userId');
-    // localStorage.removeItem('userName');
-    // localStorage.removeItem('profileId');
     return dispatch => {
         AsyncStorage.removeItem('userData')
-        .then(response => {
+        .then(response1 => {
+            AsyncStorage.removeItem('profileData');
+        })
+        .then(response2 => {
             dispatch(logout());
-        }).catch(error => {
+        })
+        .catch(error => {
             console.log(error);
+            throw error;
         });
     }
 }
@@ -126,10 +142,8 @@ export const logout = () => {
     }
 }
 
-export const authSuccess = (token,userId,userName) => {
-    // localStorage.setItem('token',token);
-    // localStorage.setItem('userId',userId);
-    // localStorage.setItem('userName',userName);
+export const setAuthStore = (token, userId, userName) => {
+    console.log("Setting Auth Store...");
     const authData = {
         token: token,
         userId: userId,
@@ -138,15 +152,17 @@ export const authSuccess = (token,userId,userName) => {
     return dispatch => {
         AsyncStorage.setItem('userData',JSON.stringify(authData))
         .then(response => {
-            dispatch(success(token,userId));
+            console.log("Auth store set");
+            dispatch(authSuccess(token,userId,userName));
         }).catch(error => {
             console.log(error);
+            throw error;
         });
     }
 }
 
 
-export const success = (token,userId) => {
+export const authSuccess = (token,userId,userName) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         token: token,
@@ -154,6 +170,7 @@ export const success = (token,userId) => {
         userId: userId,
     }
 }
+
 
 export const authFail = (error) => {
     return {

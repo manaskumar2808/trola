@@ -25,6 +25,7 @@ const InputTile = props => {
                 value={props.value}
                 onChangeText={props.setValue}
                 inputStyle={styles.input}
+                errorMessage={props.error}
                 errorStyle={styles.error}
                 selectionColor={Colors.primary}
                 inputContainerStyle={styles.inputContainer}

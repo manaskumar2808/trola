@@ -10,9 +10,14 @@ import AuthForm from '../components/AuthForm';
 
 
 const AuthScreen = props => {
+
+    const goToApp = () => {
+        props.navigation.navigate('app');
+    }
+
     return (
         <View style={styles.root}>
-            <AuthForm />
+            <AuthForm goToApp={goToApp} />
         </View>
     );
 }

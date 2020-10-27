@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
@@ -8,9 +8,15 @@ import Colors from '../constants/Colors';
 
 
 const HomeScreen = props => {
-    render (
+    useEffect(() => {
+        console.log("Inside Home Screen");
+    },[]);
+
+    return (
         <View style={styles.root}>
-            <Text style={{color: "#fff"}}>Welcome To Home Screen</Text>
+            <View style={styles.centerText}>
+                <Text style={{color: "#fff"}}>Welcome Screen</Text>
+            </View>
         </View>
     );
 }
@@ -21,6 +27,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: Colors.background,
+    },
+    centerText: {
+        borderWidth: 1,
+        borderColor: "#fff",
+        padding: 20,
     },
 });
 
