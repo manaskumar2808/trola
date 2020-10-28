@@ -9,3 +9,10 @@ export {
     fetchCurrentUser,
     updateCurrentUser,
 } from './actions/userActions';
+
+export {
+    fetchFeeds,
+    addFeed,
+    updateFeed,
+    deleteFeed,
+} from './actions/feedActions';

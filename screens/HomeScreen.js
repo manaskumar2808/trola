@@ -11,15 +11,12 @@ import * as actions from '../store/index';
 import { Button } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 
+import FeedList from '../components/FeedList';
+
 
 const HomeScreen = props => {
     let token = useSelector(state => state.ath.token);
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        console.log("Inside Home Screen");
-    },[]);
-
 
     const logout = () => {
         dispatch(actions.authLogout());
@@ -31,10 +28,8 @@ const HomeScreen = props => {
 
     return (
         <View style={styles.root}>
-            <View style={styles.centerText}>
-                <Text style={{color: "#fff"}}>Welcome Screen</Text>
-            </View>
-            <View style={styles.buttonContainer}>
+            <FeedList />
+            {/* <View style={styles.buttonContainer}>
                 <Button 
                     title="Logout"
                     type="solid"
@@ -42,9 +37,13 @@ const HomeScreen = props => {
                     titleStyle={{color: "#fff"}}
                     onPress={logout}
                 />
-            </View>
+            </View> */}
         </View>
     );
+}
+
+HomeScreen.navigationOptions = {
+
 }
 
 const styles = StyleSheet.create({
@@ -53,6 +52,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: Colors.background,
+        padding: 0,
     },
     centerText: {
         borderWidth: 1,

@@ -8,3 +8,7 @@ export const SET_CURRENT_USER = 'CURRENT_USER';
 
 export const SET_PROFILE_SUCCESS = 'SET_PROFILE_SUCCESS';
 export const SET_PROFILE_FAILED = 'SET_PROFILE_FAILED';
+
+export const SET_FEEDS = 'SET_FEEDS';
+export const FEED_FAIL = 'FEED_FAIL';
+export const FEED_SUCCESS = 'FEED_SUCCESS';

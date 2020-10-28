@@ -10,10 +10,12 @@ import Colors from './constants/Colors';
 import Navigator from './navigator/Navigator';
 import authReducer from './store/reducers/authReducer';
 import userReducer from './store/reducers/userReducer';
+import feedReducer from './store/reducers/feedReducer';
 
 const rootReducer = combineReducers({
   ath: authReducer,
   usr: userReducer,
+  pst: feedReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(Thunk));
@@ -29,6 +31,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    
+
   },
 });
