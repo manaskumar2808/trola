@@ -1,4 +1,5 @@
-import React, { Profiler } from 'react';
+import React, { useEffect, useState } from 'react';
+import axiosLike from '../../api/axios-like';
 import PropTypes from 'prop-types';
 import {
     View,
@@ -8,16 +9,79 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import { FontAwesome, Ionicons, FontAwesome5, Fontisto } from '@expo/vector-icons';
+import { Snackbar } from 'react-native-paper';
+
+import { FontAwesome, Ionicons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 
 import CommentInputTile from './CommentInputTile';
 import CircularProfileItem from './CircularProfileItem';
 import Colors from '../../constants/Colors';
 
+import LikeSVG from '../../svgs/LikeSVG';
+import CommentSVG from '../../svgs/CommentSVG';
+import BookmarkSVG from '../../svgs/BookmarkSVG';
+
+import { useSelector } from 'react-redux';
+
 const FeedTile = props => {
+    const [likes, setLikes] = useState(0);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeError, setLikeError] = useState(false);
+    const userId = useSelector(state => state.ath.userId);
+    const currentUser = useSelector(state => state.usr.currentUser);
+
+    useEffect(() => {
+        axiosLike.get(`${props.id}/likes/count/`)
+        .then(response => {
+            setLikes(response.data.count);
+        });
+        axiosLike.get(`${props.id}/likes/${userId}/`)
+        .then(response => {
+            setIsLiked(response.data.isLiked);
+        });
+    } ,[]);
+
+    const like = () => {
+        if(isLiked){
+            setIsLiked(false);
+            setLikes(prevState => prevState-1);
+            axiosLike.delete(`${props.id}/unlike/${userId}/`)
+            .then(response => {
+                props.setApiError(false);
+            }).catch(error => {
+                setIsLiked(true);
+                setLikes(prevState => prevState+1);
+                props.setApiError(true);
+            });
+        } else {
+            setIsLiked(true);
+            setLikes(prevState => prevState+1);
+            const likeData = {
+                liker: {
+                    userName: currentUser.userName,
+                    email: currentUser.email,
+                    profileImageUrl: currentUser.profileImageUrl,
+                    firstName: currentUser.firstName,
+                    lastName: currentUser.lastName,
+                    phoneNo: currentUser.phoneNo,
+                    user: userId,
+                },
+                parent: 'feed',
+                feed: props.id,
+            };
+            axiosLike.post('create/',likeData)
+            .then(response => {
+                props.setApiError(false);
+            }).catch(error => {
+                setIsLiked(false);
+                setLikes(prevState => prevState-1);
+                props.setApiError(true);
+            });
+        }
+    }
 
     const submitComment = () => {
-
+        
     }
 
     const iconSize = 23;
@@ -68,6 +132,7 @@ const FeedTile = props => {
                     <CircularProfileItem  
                         imageUrl={props.profileImageUrl}
                         radius={20}
+                        haveBorder={true}
                     />
                 </View>
                 <View style={styles.feedHeaderContent}>
@@ -94,20 +159,39 @@ const FeedTile = props => {
                 <View style={styles.reviewIconContainer}>
                     <View style={styles.reviewPart1}>
                         <View style={styles.reviewIcon}>
-                        <Fontisto 
-                            name="heart-alt" 
-                            size={iconSize} 
+                        {/* <Icon 
+                            name={ isLiked ? "favorite" : "favorite-border" }
+                            size={28} 
                             color={iconColor}
-                            onPress={() => {}}
+                            onPress={like}
+                        /> */}
+                        <AntDesign 
+                            name={isLiked ? "heart" : "hearto"} 
+                            size={27}
+                            color={isLiked ? Colors.heartRed : iconColor}
+                            onPress={like}
                         />
                         </View>
                         <View style={styles.reviewIcon}>
-                        <Fontisto 
-                            name="comment" 
-                            size={iconSize} 
+                        <CommentSVG 
+                            size={28}
                             color={iconColor}
-                            onPress={() => {}}
+                            onPress={() =>{
+                                    console.log("comment pressed");
+                                    props.goToComments(
+                                        props.id,
+                                        props.userName, 
+                                        props.profileImageUrl,
+                                        props.content
+                                    )
+                                } 
+                            }
                         />
+                        {/* <Icon 
+                            size={28}
+                            color={iconColor}
+                            type="ionicon"
+                        /> */}
                         </View>
                         <View style={styles.reviewIcon}>
                             <FontAwesome 
@@ -127,17 +211,22 @@ const FeedTile = props => {
                                 color={iconColor}
                                 onPress={() => {}} 
                             />
+                            {/* <BookmarkSVG 
+                                size={28}
+                                color={iconColor}
+                                outlined={true}
+                            /> */}
                         </View>
                     </View>
                 </View>
                 <View style={styles.likeCountContainer}>
                     <Text style={styles.likeCount}>
-                        0 likes  
+                        {likes} likes  
                     </Text>
                 </View>
                 <View style={styles.contentContainer}>
                     <Text style={styles.content}>
-                        <Text style={{color: "#fff", fontSize: 17}}>{props.userName}</Text> {props.content}
+                        <Text style={{color: "#fff", fontSize: 15, fontWeight: "bold"}}>{props.userName}</Text> {props.content}
                     </Text>
                 </View>
                 <View style={styles.commentContainer}>
@@ -147,6 +236,7 @@ const FeedTile = props => {
                     />
                 </View>
             </View>
+            
         </View>
     );
 }
@@ -160,6 +250,8 @@ FeedTile.propTypes = {
     content: PropTypes.string,
     userName: PropTypes.string,
     profileImageUrl: PropTypes.string,
+    setApiError: PropTypes.func,
+    goToComments: PropTypes.func,
 }
 
 
@@ -182,7 +274,7 @@ const styles =StyleSheet.create({
         flex: 1,
     },
     userName: {
-        fontSize: 17,
+        fontSize: 16,
         color: "#fff",
     },
     title: {
@@ -193,8 +285,10 @@ const styles =StyleSheet.create({
         width: 20,
     },
     feedImage: {
-        height: 450,
+        height: 500,
         width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
     },
     image: {
         width: "100%",
@@ -250,6 +344,13 @@ const styles =StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    loader: {
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        borderWidth: 1,
+        color: "#fff",
+    },  
 });
 
 

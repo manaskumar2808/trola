@@ -25,7 +25,7 @@ const authReducer = (state = initialState, action) => {
                 error: null,
                 token: action.token,
                 expiryDate: action.expiryDate,
-                userId: action.userName,
+                userId: action.userId,
                 justRegistered: false,
             }
         case actionTypes.AUTH_FAIL:
@@ -46,8 +46,6 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLoading: false,
-                token: null,
-                userId: null,
                 justRegistered: true,
                 profileId: action.profileId,
                 error: null,
@@ -56,8 +54,6 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLoading: false,
-                token: null,
-                userId: null,
                 justRegistered: false,
                 error: action.error,
                 profileId: null,

@@ -28,13 +28,15 @@ const CommentInputTile = props => {
                     <View style={{flex: 1,padding: 0}}>
                         <Input 
                             placeholder="Add Your Message"
-                            inputStyle={styles.chatInput}
+                            placeholderTextColor={Colors.secondary}
+                            inputStyle={styles.input}
                             inputContainerStyle={{
                                 borderBottomWidth:0,
                                 justifyContent:"center",
                                 alignItems:"center",
                                 paddingTop: 25,
                             }}
+                            
                             value={text}
                             onChangeText={setText}
                         />
@@ -77,6 +79,7 @@ const styles = StyleSheet.create({
     input: {
         height: 40,
         color: "#fff",
+        fontSize: 16,
     },
     sendButton: {
         color: Colors.primary,

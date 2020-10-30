@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/index';
 
 import FeedTile from './UI/FeedTile';
+import StoryList from './StoryList';
 
 const FeedList = props => {
     const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const FeedList = props => {
                 renderItem={
                     itemData => (
                         <FeedTile 
+                            id={itemData.item.id}
                             title={itemData.item.title}
                             content={itemData.item.content}
                             imageUrl={itemData.item.imageUrl}
@@ -36,9 +38,12 @@ const FeedList = props => {
                             image={itemData.item.image}
                             userName={itemData.item.creator.userName}
                             profileImageUrl={itemData.item.creator.profileImageUrl}
+                            setApiError={props.setApiError}
+                            goToComments={props.goToComments}
                         />
                     )
                 }
+                ListHeaderComponent={() => <StoryList />}
             />
         </View>
     );

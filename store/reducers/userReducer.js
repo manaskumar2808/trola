@@ -22,6 +22,22 @@ const userReducer = (state = initialState, action) => {
                 currentUser: action.user,
                 error: null,
             };
+        case actionTypes.SET_USERS: 
+            return {
+                ...state,
+                users: action.users,
+                error: null,
+            }
+        case actionTypes.USER_SUCCESS: 
+            return {
+                ...state,
+                error: null,
+            }
+        case actionTypes.USER_FAIL: 
+            return {
+                ...state,
+                error: action.error,
+            }
         default: 
             return state;
     }

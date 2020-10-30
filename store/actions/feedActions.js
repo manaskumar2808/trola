@@ -5,7 +5,6 @@ export const fetchFeeds = () => {
     return dispatch => {
         axios.get('')
         .then(response => {
-            console.log(response.data);
             dispatch(setFeeds(response.data));
         }).catch(error => {
             dispatch(feedFail(error));

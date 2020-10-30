@@ -3,7 +3,9 @@ import {
     View,
     Text,
     StyleSheet,
-    Keyboard
+    Keyboard,
+    ScrollView,
+    KeyboardAvoidingView,
 } from 'react-native';
 import { Button, Overlay } from 'react-native-elements';
 
@@ -152,62 +154,71 @@ const AuthForm = props => {
 
     return (
         <View style={styles.root}>
-            <InputTile 
-                placeholder="Username"
-                value={userName}
-                setValue={setUserName}
-                error={userNameError}
-            />
-            {
-                isLogin ? 
-                null :
-                <InputTile 
-                    placeholder="Email"
-                    value={email}
-                    setValue={setEmail}
-                    error={emailError}
-                />
-            }
-            <InputTile 
-                placeholder="Password"
-                value={password}
-                setValue={setPassword}
-                error={passwordError}
-                obscureText={true}
-            />
-            {
-                isLogin ? 
-                null : 
-                <InputTile 
-                    placeholder="Password Confirm"
-                    value={passwordConfirm}
-                    setValue={setPasswordConfirm}
-                    error={passwordConfirmError}
-                    obscureText={true}
-                />
-            }
-            <View style={styles.buttonContainer}>
-                <Button 
-                    title={isLogin ? "Login" : "Sign Up"}
-                    titleStyle={styles.buttonText}
-                    buttonStyle={styles.button} 
-                    loading={isLoading}
-                    onPress={submitAuth} 
-                />
-            </View>
-            <View style={styles.changeContainer}>   
-                <Text style={{color: "#fff"}}>
-                    {
-                        isLogin ? "Create an Account ? " : "Already a Member ?"
-                    }
-                </Text>
-                <Button 
-                    type="clear"
-                    title={isLogin ? "Sign up" : "Login" }
-                    titleStyle={{color: Colors.primary}}
-                    onPress={toggleAuthMode}
-                />
-            </View>
+            <ScrollView style={{width: "100%"}}>
+                <KeyboardAvoidingView behavior="padding">
+                    <View style={styles.authForm}>
+                        <Text style={styles.brand}>
+                            Outreach
+                        </Text>
+                        <InputTile 
+                            placeholder="Username"
+                            value={userName}
+                            setValue={setUserName}
+                            error={userNameError}
+                        />
+                        {
+                            isLogin ? 
+                            null :
+                            <InputTile 
+                                placeholder="Email"
+                                value={email}
+                                setValue={setEmail}
+                                error={emailError}
+                            />
+                        }
+                        <InputTile 
+                            placeholder="Password"
+                            value={password}
+                            setValue={setPassword}
+                            error={passwordError}
+                            obscureText={true}
+                        />
+                        {
+                            isLogin ? 
+                            null : 
+                            <InputTile 
+                                placeholder="Password Confirm"
+                                value={passwordConfirm}
+                                setValue={setPasswordConfirm}
+                                error={passwordConfirmError}
+                                obscureText={true}
+                            />
+                        }
+                        <View style={styles.buttonContainer}>
+                            <Button 
+                                title={isLogin ? "Login" : "Sign Up"}
+                                titleStyle={styles.buttonText}
+                                buttonStyle={styles.button} 
+                                loading={isLoading}
+                                onPress={submitAuth} 
+                            />
+                        </View>
+                        <View style={styles.changeContainer}>   
+                            <Text style={{color: "#fff"}}>
+                                {
+                                    isLogin ? "Create an Account ? " : "Already a Member ?"
+                                }
+                            </Text>
+                            <Button 
+                                type="clear"
+                                title={isLogin ? "Sign up" : "Login" }
+                                titleStyle={{color: Colors.primary}}
+                                onPress={toggleAuthMode}
+                            />
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+           
 
             <OverlayTile 
                 isVisible={showLoginPrompt}
@@ -226,6 +237,7 @@ const AuthForm = props => {
                 buttonText="Ok"
                 type="failure"
             />
+        </ScrollView>
         </View>
     );
 }
@@ -240,6 +252,16 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: Colors.background,
         padding: 20,
+    },
+    authForm: {
+      justifyContent: "center",  
+      alignItems: "center",
+      paddingTop: 80,
+    },
+    brand: {
+        fontFamily: 'billabong',
+        color: "#fff",
+        fontSize: 80,
     },
     buttonContainer: {
         width: "95%",

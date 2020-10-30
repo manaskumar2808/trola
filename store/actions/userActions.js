@@ -14,9 +14,9 @@ export const fetchCurrentUser = (userId) => {
     }
 }
 
-export const setCurrentUser = (user) => {
+export const setCurrentUser = (currentUser) => {
     return {
-        type: actionTypes.CURRENT_USER,
+        type: actionTypes.SET_CURRENT_USER,
         user: {
             userName: currentUser.userName,
             email: currentUser.email,
@@ -41,3 +41,50 @@ export const updateCurrentUser = (newProfile) => {
         });
     }
 };
+
+
+export const fetchUsers = () => {
+    return dispatch => {
+        axios.get('profile/')
+        .then(response => {
+            dispatch(setUsers(response.data));
+        }).catch(error => {
+            dispatch(userFail(error));
+        });
+    }
+}
+
+
+export const setUsers = (users) => {
+    const loadedUsers = [];
+    for(let key in users){
+        loadedUsers.push({
+            id: users[key].id,
+            userName: users[key].userName,
+            email: users[key].email,
+            profileImageUrl: users[key].profileImageUrl,
+            firstName: users[key].firstName,
+            lastName: users[key].lastName,
+            phoneNo: users[key].phoneNo,
+            userId: users[key].user,
+        });
+    }
+
+    return {
+        type: actionTypes.SET_USERS,
+        users: loadedUsers,
+    }
+}
+
+export const userSuccess = () => {
+    return {
+        type: actionTypes.USER_SUCCESS,
+    }
+}
+
+export const userFail = (error) => {
+    return {
+        type: actionTypes.USER_FAIL,
+        error: error,
+    }
+}
